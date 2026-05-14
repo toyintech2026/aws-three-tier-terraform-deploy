@@ -9,9 +9,20 @@ terraform {
       source  = "namecheap/namecheap"
       version = "2.2.0"
     }
+
     aws = {
       source  = "hashicorp/aws"
       version = "6.0.0-beta2"
+    }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.37.1"
+    }
+
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.17.0"
     }
   }
 }
