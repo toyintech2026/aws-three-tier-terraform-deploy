@@ -34,15 +34,14 @@ module "eks-deployment" {
 
 }
 
-module "namecheap-deployment" {
-  source                               = "./module-dns"
-  environment                          = var.environment
-  domain-name                          = var.domain-name
-  nginx_lb_ip                          = module.eks-deployment.nginx_lb_ip
-  nginx_ingress_load_balancer_hostname = module.eks-deployment.nginx_ingress_load_balancer_hostname
-  nginx_ingress_lb_dns                 = module.eks-deployment.nginx_ingress_lb_dns
-
-}
+# module "namecheap-deployment" {
+#   source = "./module-dns"
+#   domain_name = var.domain_name
+#   namecheap_api_user = var.namecheap_api_user
+#   namecheap_api_key = var.namecheap_api_key
+#   namecheap_username = var.namecheap_username
+#   namecheap_client_ip = var.namecheap_client_ip
+# }
 
 module "rds-mysql-deployment" {
   source                 = "./module-database"
