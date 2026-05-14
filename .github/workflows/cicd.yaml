@@ -62,9 +62,9 @@ jobs:
       - name: Terraform Security Scan
         continue-on-error: true
         run: ./tfsec .
-
+        
       - name: Terraform Plan
         run: terraform plan -input=false
 
       - name: Terraform Apply
-  run: terraform apply -auto-approve -input=false
+        run: terraform apply -auto-approve -input=false
