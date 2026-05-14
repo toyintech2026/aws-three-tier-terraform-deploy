@@ -1,0 +1,18 @@
+name: Test Self Hosted Runner
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-runner:
+    runs-on: [self-hosted, docker, terraform]
+
+    steps:
+      - name: Confirm runner is working
+        run: echo "Self-hosted runner is active and working"
+
+      - name: Check Docker
+        run: docker --version
+
+      - name: Check current user
+        run: whoami
