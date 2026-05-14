@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
-    bucket = "digitalwitchngbucketcloud1"
-    key    = "digitalwitchng/prodution/terraform.tfstate"
+    bucket = "toyin-terraform-state-bucket-2026"
+    key    = "aws-three-tier-terraform-deploy/production/terraform.tfstate"
     region = "us-west-1"
   }
 }
