@@ -1,10 +1,10 @@
 name: Deploy to AWS with Terraform
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   deploy-iac:
-    runs-on: terraform
+    runs-on: [self-hosted, docker, terraform]
 
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -23,12 +23,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup AWS CLI
+      - name: Confirm private GitHub runner
         run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
-          aws --version
+          echo "Running on private self-hosted GitHub runner"
+          whoami
+          docker --version
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -42,6 +41,9 @@ jobs:
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+      - name: Clean old Terraform cache
+        run: rm -rf .terraform .terraform.lock.hcl
+
       - name: Install tfsec for security scanning
         run: |
           curl -sLo tfsec https://github.com/aquasecurity/tfsec/releases/latest/download/tfsec-linux-amd64
@@ -49,7 +51,7 @@ jobs:
           ./tfsec --version
 
       - name: Terraform Init
-        run: terraform init -reconfigure
+        run: terraform init -reconfigure -input=false
 
       - name: Terraform Format
         run: terraform fmt -check
@@ -61,8 +63,8 @@ jobs:
         run: ./tfsec .
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -input=false
 
-      # Enable this only when you are ready to deploy real AWS resources
+      # Uncomment this only when you are ready to create/update AWS resources
       # - name: Terraform Apply
-      #   run: terraform apply -auto-approve
+      #   run: terraform apply -auto-approve -input=false
