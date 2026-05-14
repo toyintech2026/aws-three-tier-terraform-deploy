@@ -66,6 +66,5 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -input=false
 
-      # Uncomment this only when you are ready to create/update AWS resources
-      # - name: Terraform Apply
-      #   run: terraform apply -auto-approve -input=false
+      - name: Terraform Apply
+  run: terraform apply -auto-approve -input=false
