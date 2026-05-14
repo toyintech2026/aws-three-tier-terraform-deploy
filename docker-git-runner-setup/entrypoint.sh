@@ -2,19 +2,29 @@
 set -e
 
 cd /home/runner
+
 echo "Fixing permissions for /home/runner/_work..."
 mkdir -p /home/runner/_work
 chown -R runner:runner /home/runner/_work
 
-# Use REPO like "username/repo"
+# REPO must be in this format: username/repo
 TOKEN_URL="https://api.github.com/repos/${REPO}/actions/runners/registration-token"
 
 echo "Requesting registration token for $REPO..."
+
 RUNNER_TOKEN=$(curl -s -X POST \
-  -H "Authorization: token ${GITHUB_PAT}" \
+  -H "Authorization: Bearer ${GITHUB_PAT}" \
+  -H "Accept: application/vnd.github+json" \
   "${TOKEN_URL}" | jq -r .token)
 
+if [ -z "$RUNNER_TOKEN" ] || [ "$RUNNER_TOKEN" = "null" ]; then
+  echo "Failed to get GitHub runner registration token."
+  echo "Check your REPO value and GitHub PAT permissions."
+  exit 1
+fi
+
 echo "Registering runner: $RUNNER_NAME"
+
 ./config.sh --unattended \
   --url "https://github.com/${REPO}" \
   --token "${RUNNER_TOKEN}" \
@@ -23,5 +33,5 @@ echo "Registering runner: $RUNNER_NAME"
   --work _work \
   --replace
 
-echo "Starting runner...."
+echo "Starting runner..."
 exec ./run.sh
